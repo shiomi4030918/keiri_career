@@ -19,9 +19,9 @@
  */
 
 // ===== 設定 =====
-var SPREADSHEET_ID = "";                       // 保存先スプレッドシートのID（空なら自動作成）
-var SHEET_GID      = 0;                         // 保存先タブのgid（URLの #gid=◯◯ の数字）。0なら下のSHEET_NAMEを使用
-var SHEET_NAME     = "求職者リスト（経理キャリア）"; // タブ名
+var SPREADSHEET_ID = "1LZVQgYoSYLHosnMUSGeAiOdJyNGAN2OmxugLAy0tM4c"; // 保存先スプレッドシートのID
+var SHEET_GID      = 193485907;                // 保存先タブのgid（URLの #gid=◯◯ の数字）。0なら下のSHEET_NAMEを使用
+var SHEET_NAME     = "求職者リスト（経理キャリア）"; // タブ名。SHEET_GIDのタブはこの名前に自動でそろえます
 var NOTIFY_TO      = "shiomiaki0918403@gmail.com";
 var REPLY_TO       = "info@hitotech.jp";        // 応募者へのお礼メールの差出名・返信先（問い合わせ窓口）
 var SITE_NAME      = "経理キャリア";
