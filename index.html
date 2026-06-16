@@ -85,27 +85,32 @@
   .intro .q{font-size:19px;font-weight:900;margin-bottom:3px;color:var(--navy);}
   .intro .note{font-size:12px;color:var(--muted);margin-bottom:18px;}
   .cta{
-    position:relative;display:flex;align-items:center;justify-content:center;gap:10px;
-    width:100%;border:2px solid transparent;border-radius:14px;cursor:pointer;
-    font-size:17px;font-weight:900;padding:18px 40px 18px 22px;margin:11px 0;color:#fff;
+    position:relative;display:flex;align-items:center;justify-content:center;
+    width:100%;min-height:76px;border:2px solid transparent;border-radius:14px;cursor:pointer;
+    font-size:17px;font-weight:900;padding:16px 52px;margin:11px 0;color:#fff;text-align:center;
     background:linear-gradient(135deg,#f59321,#dd6606);
     box-shadow:0 8px 20px rgba(217,106,16,.4);
     transition:transform .14s,box-shadow .14s,background .14s;font-family:inherit;
   }
-  .cta::after{content:"›";position:absolute;right:18px;font-size:26px;font-weight:700;opacity:.9;}
-  .cta .cta-ic{font-size:26px;flex:none;line-height:1;font-variation-settings:'wght' 500;}
-  .cta .cta-badge{display:inline-block;align-self:center;font-size:10px;font-weight:800;letter-spacing:.4px;
-    background:rgba(255,255,255,.26);color:#fff;padding:2px 9px;border-radius:999px;margin-bottom:4px;}
+  .cta::after{content:"›";position:absolute;right:18px;top:50%;transform:translateY(-50%);
+    font-size:26px;font-weight:700;opacity:.9;}
+  /* アイコンは左端に固定（テキストはボタン中央のまま） */
+  .cta .cta-ic{position:absolute;left:16px;top:50%;transform:translateY(-50%);
+    width:42px;height:42px;border-radius:50%;
+    display:grid;place-items:center;font-size:24px;line-height:1;
+    font-variation-settings:'wght' 500;background:rgba(255,255,255,.2);}
+  .cta .txt{display:flex;flex-direction:column;align-items:center;line-height:1.3;}
+  .cta .cta-badge{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.4px;
+    background:rgba(255,255,255,.26);color:#fff;padding:2px 9px;border-radius:999px;margin-bottom:5px;}
+  .cta small{font-size:11.5px;font-weight:600;opacity:.95;margin-top:3px;}
   /* メイン：今すぐ動きたい人向け（塗りつぶし＝目立つ） */
   .cta:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(221,102,6,.46);}
   .cta:active{transform:translateY(1px);}
   /* サブ：まず情報収集したい人向け（白地＋枠線＝控えめ） */
   .cta.alt{background:#ffffff;color:var(--primary-dark);
     border:2px solid var(--primary);box-shadow:0 5px 14px rgba(217,106,16,.14);}
-  .cta.alt .cta-ic{color:var(--primary);}
+  .cta.alt .cta-ic{color:var(--primary);background:rgba(217,106,16,.12);}
   .cta.alt:hover{background:#fff6ec;box-shadow:0 10px 22px rgba(217,106,16,.2);}
-  .cta .txt{display:flex;flex-direction:column;align-items:center;line-height:1.3;}
-  .cta small{font-size:11.5px;font-weight:600;opacity:.95;margin-top:2px;}
   .cta.alt small{color:var(--muted);opacity:1;}
   /* 採用担当者向け：控えめな小さいボタン */
   .cta-mini{
@@ -282,7 +287,7 @@
     }
     #introScreen.modal-open .intro .q{font-size:24px;margin-bottom:6px;}
     #introScreen.modal-open .intro .note{font-size:13px;margin-bottom:22px;}
-    #introScreen.modal-open .intro .cta{font-size:18px;padding:20px 22px;}
+    #introScreen.modal-open .intro .cta{font-size:18px;padding:18px 52px;}
     #introScreen.modal-open .intro .cta small{font-size:12px;}
     #introScreen.modal-open .intro-close{
       display:flex;align-items:center;justify-content:center;
