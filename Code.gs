@@ -158,22 +158,28 @@ function sendMail_(data, jstTime) {
     return "■ " + f[1] + "：" + v;
   });
 
-  var body =
-    SITE_NAME + " のLPから新しい応募がありました。\n\n" +
-    lines.join("\n") +
-    "\n\n--------------------------------\n" +
-    "このメールは自動送信です。";
-
-  // 件名にこのサイトならではの情報（氏名・エリア・経理経験年数・保有資格）を載せる
+  // 概要（氏名・エリア・経理経験年数・保有資格）。件名と本文先頭サマリに使う
   var area = [data.pref, data.city].filter(function (x) { return x; }).join(" ");
   var parts = [];
   parts.push(data.name ? data.name + "様" : "お名前未入力");
   if (area) parts.push(area);
   if (data.experienceYears) parts.push("経験" + data.experienceYears);
   if (data.qualification) parts.push(data.qualification);
-  var subject = "【" + SITE_NAME + "】新規応募：" + parts.join("／");
+  var summary = parts.join("／");
+  var subject = "【" + SITE_NAME + "】新規応募：" + summary;
 
-  MailApp.sendEmail(NOTIFY_TO, subject, body);
+  // 本文：スマホの通知は本文の改行を詰めて1行表示するため、冒頭の1行で完結させる
+  var headline = "新規応募｜" + summary + "｜TEL " + (data.tel || "未入力") + "｜" + (data.email || "未入力");
+  var body =
+    headline + "\n\n" +
+    "──────────────────\n" +
+    "【詳細】\n" +
+    lines.join("\n") +
+    "\n──────────────────\n" +
+    SITE_NAME + "（自動送信）";
+
+  // テキスト＋HTML併用（プレーンテキストだと長文が約26文字で強制改行されるため）
+  MailApp.sendEmail(NOTIFY_TO, subject, body, { htmlBody: toHtmlBody_(body) });
 }
 
 // 応募者本人へのお礼（自動返信）メール
@@ -208,7 +214,20 @@ function sendThanks_(data, jstTime) {
 
   var subject = "【" + SITE_NAME + "】ご応募ありがとうございます";
 
-  MailApp.sendEmail(to, subject, body, { name: SITE_NAME, replyTo: REPLY_TO });
+  // テキスト＋HTML併用（プレーンテキストだと長文が約26文字で強制改行されるため）
+  MailApp.sendEmail(to, subject, body, { name: SITE_NAME, replyTo: REPLY_TO, htmlBody: toHtmlBody_(body) });
+}
+
+// プレーンテキスト本文を、自然に折り返されるHTML本文へ変換する
+function toHtmlBody_(text) {
+  var esc = String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+  return '<div style="font-family:\'Hiragino Kaku Gothic ProN\',Meiryo,sans-serif;'
+       + 'font-size:14px;line-height:1.8;color:#222222;">'
+       + esc.replace(/\n/g, "<br>")
+       + '</div>';
 }
 
 function jsonOut_(obj) {
