@@ -450,23 +450,29 @@
       <div class="nav"><button class="btn btn-back" data-back>＜ 戻る</button></div>
     </div>
 
-    <!-- STEP 3: 保有資格 -->
+    <!-- STEP 3: 保有資格（複数選択可） -->
     <div class="step" data-step="3">
       <h2>保有資格を教えてください</h2>
-      <div class="desc">あてはまるものをお選びください</div>
-      <div class="opts" data-key="qualification" data-auto>
-        <button class="opt" data-val="簿記1級"><span class="ic">🥇</span>簿記1級</button>
-        <button class="opt" data-val="簿記2級"><span class="ic">🥈</span>簿記2級</button>
-        <button class="opt" data-val="簿記3級"><span class="ic">🥉</span>簿記3級</button>
-        <button class="opt" data-val="FASS検定"><span class="ic">📑</span>FASS検定</button>
-        <button class="opt" data-val="公認会計士"><span class="ic">🎓</span>公認会計士</button>
-        <button class="opt" data-val="税理士（登録済み）"><span class="ic">⚖️</span>税理士（登録済み）</button>
-        <button class="opt" data-val="税理士（未登録）"><span class="ic">📝</span>税理士（未登録）</button>
-        <button class="opt" data-val="税理士試験科目合格"><span class="ic">✏️</span>税理士試験科目合格</button>
-        <button class="opt" data-val="その他"><span class="ic">➕</span>その他</button>
-        <button class="opt" data-val="保有資格なし"><span class="ic">➖</span>保有資格なし</button>
+      <div class="desc">あてはまるものをすべてお選びください（複数選択可）</div>
+      <div class="group" id="g-qual">
+        <div class="opts" data-key="qualification" data-multi data-exclusive="保有資格なし">
+          <button class="opt" data-val="簿記1級"><span class="ic">🥇</span>簿記1級</button>
+          <button class="opt" data-val="簿記2級"><span class="ic">🥈</span>簿記2級</button>
+          <button class="opt" data-val="簿記3級"><span class="ic">🥉</span>簿記3級</button>
+          <button class="opt" data-val="FASS検定"><span class="ic">📑</span>FASS検定</button>
+          <button class="opt" data-val="公認会計士"><span class="ic">🎓</span>公認会計士</button>
+          <button class="opt" data-val="税理士（登録済み）"><span class="ic">⚖️</span>税理士（登録済み）</button>
+          <button class="opt" data-val="税理士（未登録）"><span class="ic">📝</span>税理士（未登録）</button>
+          <button class="opt" data-val="税理士試験科目合格"><span class="ic">✏️</span>税理士試験科目合格</button>
+          <button class="opt" data-val="その他"><span class="ic">➕</span>その他</button>
+          <button class="opt" data-val="保有資格なし"><span class="ic">➖</span>保有資格なし</button>
+        </div>
+        <div class="err">保有資格を選択してください（なければ「保有資格なし」をお選びください）</div>
       </div>
-      <div class="nav"><button class="btn btn-back" data-back>＜ 戻る</button></div>
+      <div class="nav">
+        <button class="btn btn-back" data-back>＜ 戻る</button>
+        <button class="btn btn-next" data-next>次へ ＞</button>
+      </div>
     </div>
 
     <!-- STEP 4: 勤務形態・上場経理経験 -->
@@ -851,8 +857,8 @@
     });
   });
 
-  // 選択式（自動で進まない：1ページに複数設問があるステップ用）
-  document.querySelectorAll(".opts:not([data-auto])").forEach(function(group){
+  // 選択式（自動で進まない：1ページに複数設問があるステップ用・単一選択）
+  document.querySelectorAll(".opts:not([data-auto]):not([data-multi])").forEach(function(group){
     var key = group.getAttribute("data-key");
     group.querySelectorAll(".opt").forEach(function(opt){
       opt.addEventListener("click", function(){
@@ -861,6 +867,36 @@
         data[key] = opt.getAttribute("data-val");
         var g = group.closest(".group");
         if(g) g.classList.remove("invalid");
+      });
+    });
+  });
+
+  // 複数選択式（例：保有資格）。data-exclusive の選択肢は他と排他にする
+  document.querySelectorAll(".opts[data-multi]").forEach(function(group){
+    var key = group.getAttribute("data-key");
+    var exclusive = group.getAttribute("data-exclusive");
+    group.querySelectorAll(".opt").forEach(function(opt){
+      opt.addEventListener("click", function(){
+        var val = opt.getAttribute("data-val");
+        if(exclusive && val === exclusive){
+          // 「保有資格なし」など：選ぶと他をすべて解除してトグル
+          var willSelect = !opt.classList.contains("sel");
+          group.querySelectorAll(".opt").forEach(function(o){o.classList.remove("sel");});
+          if(willSelect) opt.classList.add("sel");
+        } else {
+          opt.classList.toggle("sel");
+          // 他の資格を選んだら排他項目は解除
+          if(exclusive){
+            group.querySelectorAll(".opt").forEach(function(o){
+              if(o.getAttribute("data-val") === exclusive) o.classList.remove("sel");
+            });
+          }
+        }
+        var vals = [];
+        group.querySelectorAll(".opt.sel").forEach(function(o){ vals.push(o.getAttribute("data-val")); });
+        data[key] = vals.join("、");
+        var g = group.closest(".group");
+        if(g && vals.length) g.classList.remove("invalid");
       });
     });
   });
@@ -906,6 +942,11 @@
   }
 
   function validate(n){
+    if(n === 3){
+      var okQual = !!(data.qualification && data.qualification.length);
+      document.getElementById("g-qual").classList.toggle("invalid", !okQual);
+      return okQual;
+    }
     if(n === 4){
       var okW = !!data.workstyle;
       var okL = !!data.listedExp;
